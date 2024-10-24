@@ -18,9 +18,10 @@ class NotesController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
     {
-        //
+        $isEdit =  false;
+        return view('notes.create-edit', compact('isEdit'));
     }
 
     /**
@@ -58,8 +59,10 @@ class NotesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Note $note)
+    public function destroy(Note $note): \Illuminate\Http\RedirectResponse
     {
-        //
+        $note->delete();
+
+        return redirect()->route('home');
     }
 }
