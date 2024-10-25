@@ -26,7 +26,7 @@
                                 </label>
 
                                 <div class="col-md-6">
-                                    <input id="title" type="text" class="form-control "  name="title" value="{{$isEdit?$note->title:''}}" required >
+                                    <input id="title" type="text" class="form-control "  name="title" value="{{$isEdit?$note->title:old('title')}}" required >
                                 </div>
                             </div>
 
@@ -37,7 +37,7 @@
 
                                 <div class="col-md-6">
                                     <textarea id="description" type="text" class="form-control" name="description" required >
-                                        {{$isEdit?$note->title:''}}
+                                        {{$isEdit?$note->title:old('description')}}
                                     </textarea>
                                 </div>
                             </div>
