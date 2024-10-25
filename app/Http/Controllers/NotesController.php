@@ -27,11 +27,11 @@ class NotesController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
     {
         $request->validate([
-            'title' => 'required',
-            'description' => 'required',
+            'title' => 'required|min:8|unique:notes,title',
+            'description' => 'required|min:8',
         ]);
         $note = new Note();
         $note->title = $request->input('title');
@@ -50,7 +50,7 @@ class NotesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Note $note)
+    public function show(Note $note): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
     {
         return view('notes.show', compact(['note']));
     }
@@ -58,7 +58,7 @@ class NotesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Note $note)
+    public function edit(Note $note): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
     {
         $isEdit =  true;
         return view('notes.create-edit', compact(['isEdit', 'note']));
@@ -67,7 +67,7 @@ class NotesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Note $note)
+    public function update(Request $request, Note $note): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
     {
         $request->validate([
             'title' => 'required',
