@@ -8,6 +8,13 @@
                     <div class="card-header">{{ __('Note') }}</div>
 
                     <div class="card-body">
+                        <div class="alert alert-danger">
+                            @if($errors->any())
+                                @foreach($errors->all() as $e)
+                                    {{$e}}
+                                @endforeach
+                            @endif
+                        </div>
                         <form action="{{$isEdit?route('notes.update',$note->id): route('notes.store')}}" method="POST">
                             @csrf
                             @if($isEdit)
