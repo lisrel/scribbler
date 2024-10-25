@@ -21,7 +21,7 @@ class NotesController extends Controller
     public function create(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
     {
         $isEdit =  false;
-        return view('notes.create-edit', compact('isEdit'));
+        return view('notes.create-edit', compact(['isEdit']));
     }
 
     /**
@@ -29,7 +29,22 @@ class NotesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+        ]);
+        $note = new Note();
+        $note->title = $request->input('title');
+        $note->description = $request->input('description');
+
+        // Save the note and check if the save was successful
+        if ($note->save()) {
+            return redirect(route('notes.show', $note->id)); // Redirect to the note's page
+        } else {
+            // Handle the case where the note could not be saved
+            return back()->with('error', 'Failed to save the note.');
+        }
+
     }
 
     /**
@@ -45,7 +60,8 @@ class NotesController extends Controller
      */
     public function edit(Note $note)
     {
-        //
+        $isEdit =  true;
+        return view('notes.create-edit', compact(['isEdit', 'note']));
     }
 
     /**
@@ -53,7 +69,22 @@ class NotesController extends Controller
      */
     public function update(Request $request, Note $note)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+        ]);
+
+        $note->title = $request->input('title');
+        $note->description = $request->input('description');
+
+        // Save the note and check if the save was successful
+        if ($note->update()) {
+            return redirect(route('notes.show', $note->id)); // Redirect to the note's page
+        } else {
+            // Handle the case where the note could not be saved
+            return back()->with('error', 'Failed to save the note.');
+        }
+
     }
 
     /**
