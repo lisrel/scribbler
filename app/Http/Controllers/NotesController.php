@@ -4,15 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Note;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotesController extends Controller
 {
+    public function __construct(){
+        $this->middleware('owner')->only(['show', 'edit', 'destroy']);
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
     {
-        return view('notes.index', []);
+        $notes = Note::where('user_id', Auth::user()->id)->get();
+        return view('notes.index', compact('notes'));
     }
 
     /**
@@ -36,6 +41,7 @@ class NotesController extends Controller
         $note = new Note();
         $note->title = $request->input('title');
         $note->description = $request->input('description');
+        $note->user_id = Auth::user()->id;
 
         // Save the note and check if the save was successful
         if ($note->save()) {
@@ -76,6 +82,8 @@ class NotesController extends Controller
 
         $note->title = $request->input('title');
         $note->description = $request->input('description');
+        $note->user_id = Auth::user()->id;
+
 
         // Save the note and check if the save was successful
         if ($note->update()) {
