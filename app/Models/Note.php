@@ -14,6 +14,9 @@ class Note extends Model
 //    public mixed $title;
     protected $fillable = ['title', 'description'];
 
-
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }

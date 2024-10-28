@@ -16,6 +16,7 @@ class NotesController extends Controller
      */
     public function index(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
     {
+        //dd(Auth::user()->notes);
         $notes = Note::where('user_id', Auth::user()->id)->get();
         return view('notes.index', compact('notes'));
     }
