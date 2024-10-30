@@ -42,6 +42,22 @@
                                 </div>
                             </div>
 
+                             <div class="row mb-3">
+                                <label for="description" class="col-md-4 col-form-label text-md-end">
+                                    {{ __('Share With') }}
+                                </label>
+
+                                <div class="col-md-6">
+                                    <select name="shareWith[]" id="shareWith" multiple>
+                                        @foreach(App\Models\User::all()->except(Auth::id()) as $user)
+                                            <option {{$isEdit? ($note->shared->contains($user) ? 'selected': '') :''}} value="{{$user->id}}">
+                                                {{$user->name}}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
                             <button class="btn btn-success" type="submit">
                                 {{$isEdit?'Update': 'Create'}}
                             </button>

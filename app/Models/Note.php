@@ -19,4 +19,9 @@ class Note extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function shared(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class,'note_user');
+    }
+
 }

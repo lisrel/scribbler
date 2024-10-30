@@ -18,6 +18,8 @@ class NotesController extends Controller
     {
         //dd(Auth::user()->notes);
         $notes = Note::where('user_id', Auth::user()->id)->get();
+        $other = Auth::user()->shared;
+        $notes = $notes->merge($other);
         return view('notes.index', compact('notes'));
     }
 
@@ -38,6 +40,8 @@ class NotesController extends Controller
         $request->validate([
             'title' => 'required|min:8|unique:notes,title',
             'description' => 'required|min:8',
+            'shareWith' => 'required',
+
         ]);
         $note = new Note();
         $note->title = $request->input('title');
@@ -46,6 +50,8 @@ class NotesController extends Controller
 
         // Save the note and check if the save was successful
         if ($note->save()) {
+            $note->shared()->detach();
+            $note->shared()->attach($request->input('shareWith'));
             return redirect(route('notes.show', $note->id)); // Redirect to the note's page
         } else {
             // Handle the case where the note could not be saved
@@ -67,8 +73,13 @@ class NotesController extends Controller
      */
     public function edit(Note $note): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
     {
-        $isEdit =  true;
-        return view('notes.create-edit', compact(['isEdit', 'note']));
+        if ($note->user_id == Auth::id()){
+            $isEdit =  true;
+            return view('notes.create-edit', compact(['isEdit', 'note']));
+        }else{
+            abort(403);
+        }
+
     }
 
     /**
@@ -79,6 +90,7 @@ class NotesController extends Controller
         $request->validate([
             'title' => 'required',
             'description' => 'required',
+            'shareWith' => 'required',
         ]);
 
         $note->title = $request->input('title');
@@ -88,6 +100,8 @@ class NotesController extends Controller
 
         // Save the note and check if the save was successful
         if ($note->update()) {
+            $note->shared()->detach();
+            $note->shared()->attach($request->input('shareWith'));
             return redirect(route('notes.show', $note->id)); // Redirect to the note's page
         } else {
             // Handle the case where the note could not be saved

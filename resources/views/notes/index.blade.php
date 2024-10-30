@@ -10,6 +10,7 @@
                         <tr>
                             <th>Title</th>
                             <th>Created At</th>
+                            <th>Created By</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -24,19 +25,22 @@
                                     {{$item->created_at}}
                                 </td>
                                 <td>
+                                    {{App\Models\User::find($item->user_id)->name}}
+                                </td>
+                                <td>
                                     <a class="btn btn-info" href="{{route('notes.show', $item->id)}}"> Show </a>
+                                    @if($item->user_id == Auth::id())
+                                        <a class="btn btn-secondary" href="{{route('notes.edit', $item->id)}}"> Edit </a>
 
-                                    <a class="btn btn-secondary" href="{{route('notes.edit', $item->id)}}"> Edit </a>
+                                        <form method="POST" action="{{route('notes.destroy', $item->id)}}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger" type="submit">
+                                                Delete
+                                            </button>
 
-                                    <form method="POST" action="{{route('notes.destroy', $item->id)}}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-danger" type="submit">
-                                             Delete
-                                        </button>
-
-                                    </form>
-
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
