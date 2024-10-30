@@ -49,4 +49,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Note::class);
     }
+    public function shared(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Note::class,'note_user');
+    }
 }

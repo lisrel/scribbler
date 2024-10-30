@@ -33,14 +33,33 @@
                                 <textarea id="description" type="text" class="form-control" name="description" required readonly>{{$note->description}}</textarea>
                             </div>
                         </div>
-                        <a href="{{route('notes.edit', $note->id)}}">Edit</a>
+                        @if($note->user_id == Auth::id())
 
+                            <div class="row mb-3">
+                                <label for="description" class="col-md-4 col-form-label text-md-end">
+                                    {{ __('Shared With') }}
+                                </label>
 
-                        <form method="POST" action="{{route('notes.destroy', $note->id)}}">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger" type="submit">Delete</button>
-                        </form>
+                                <div class="col-md-6">
+                                    <ul>
+                                        @foreach($note->shared as $u )
+                                            <li>
+                                                {{$u->name}}
+                                            </li>
+                                        @endforeach
+
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <a href="{{route('notes.edit', $note->id)}}">Edit</a>
+
+                            <form method="POST" action="{{route('notes.destroy', $note->id)}}">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
