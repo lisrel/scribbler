@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Ozdemir\Datatables\Datatables;
+use Ozdemir\Datatables\DB\LaravelAdapter;
 
 class NotesController extends Controller
 {
@@ -20,6 +22,7 @@ class NotesController extends Controller
         $notes = Note::where('user_id', Auth::user()->id)->get();
         $other = Auth::user()->shared;
         $notes = $notes->merge($other);
+        //dd($notes);
         return view('notes.index', compact('notes'));
     }
 
@@ -118,5 +121,47 @@ class NotesController extends Controller
         $note->delete();
 
         return redirect()->route('home');
+    }
+
+    public function getData(): Datatables
+    {
+        $dt = new Datatables(new LaravelAdapter);
+//        $sqlBuilder = Note::select([
+//            'notes.id',
+//            'notes.title',
+//            'users.name',
+//            'notes.created_at',
+//        ])
+//            ->join('users', 'users.id', '=', 'notes.user_id')
+//            ->where('user_id', Auth::id());
+
+        $sqlBuilder = " select a.id, a.title,a.created_at ,
+        a.name from ((Select notes.id, notes.title, users.name,notes.created_at
+        FROM notes
+        join users on notes.user_id = users.id
+        where notes.user_id = ".Auth::id().")
+        UNION (
+        Select notes.id, notes.title,
+        (select name from users where users.id=notes.user_id)name,
+        notes.created_at
+        FROM note_user
+        Join notes on notes.id = note_user.note_id
+        join users on note_user.user_id = users.id
+        where note_user.user_id = ".Auth::id()."
+        )) a
+        ";
+        $dt->query($sqlBuilder);
+
+        // edit 'id' column
+        $dt->edit('title', function ($data) {
+            return '<a href="'.route('notes.show',$data['id']).'">'.$data['title'].' </a> ';
+        });
+
+        // add 'action' column
+        $dt->add('action', function ($data) {
+            return '<a href="'.route('notes.edit', $data['id']).'">#edit </a> '.'/ <a href="'.route('notes.destroy', $data['id']).'">#delete </a> ';
+        });
+        $dt->hide('id');
+        return $dt->generate();
     }
 }
