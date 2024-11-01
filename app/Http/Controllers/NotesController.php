@@ -159,7 +159,7 @@ class NotesController extends Controller
 
         // add 'action' column
         $dt->add('action', function ($data) {
-            return '<a href="'.route('notes.edit', $data['id']).'">#edit </a> '.'/ <a href="'.route('notes.destroy', $data['id']).'">#delete </a> ';
+            return '<a href="'.route('notes.edit', $data['id']).'">#edit </a> ';
         });
         $dt->hide('id');
         return $dt->generate();
